@@ -93,7 +93,7 @@ class Post(BaseModel):
         'Изображение',
         upload_to='posts_images',
         blank=True
-        )
+    )
 
     class Meta:
         ordering = ('-pub_date',)

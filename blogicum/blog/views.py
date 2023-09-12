@@ -106,8 +106,7 @@ class ProfileListView(ListView):
     def get_queryset(self):
         if self.kwargs['slug'] == self.request.user.username:
             return super().get_queryset().select_related(
-                'location', 'author', 'category'
-                ).filter(
+                'location', 'author', 'category').filter(
                     author__username=self.request.user.username).annotate(
                         comment_count=Count('comments')).order_by('-pub_date')
         return QUERYSET.filter(author__username=self.kwargs['slug']).order_by(
