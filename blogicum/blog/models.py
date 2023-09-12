@@ -99,9 +99,6 @@ class Post(BaseModel):
     def __str__(self):
         return self.title
 
-    # def get_absolute_url(self):
-    #     return reverse("blog:post_detail", kwargs={"pk": self.pk})
-
 
 class Comment(models.Model):
     text = models.TextField('Комментарий')
