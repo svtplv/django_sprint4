@@ -11,11 +11,13 @@ from blog.forms import PostForm, CommentForm
 from blog.models import Category, Post, UserModel, Comment
 
 
-QUERYSET = Post.objects.select_related('location', 'author', 'category').filter(
-    pub_date__lte=timezone.now(),
-    is_published=True,
-    category__is_published=True
-).annotate(comment_count=Count('comments'))
+QUERYSET = Post.objects.select_related(
+    'location',
+    'author',
+    'category').filter(
+        pub_date__lte=timezone.now(),
+        is_published=True,
+        category__is_published=True).annotate(comment_count=Count('comments'))
 
 
 @login_required
@@ -103,14 +105,18 @@ class ProfileListView(ListView):
 
     def get_queryset(self):
         if self.kwargs['slug'] == self.request.user.username:
-            return super().get_queryset().select_related('location', 'author', 'category').filter(
-                author__username=self.request.user.username
-                ).annotate(comment_count=Count('comments')).order_by('-pub_date')
-        return QUERYSET.filter(author__username=self.kwargs['slug']).order_by('-pub_date')
+            return super().get_queryset().select_related(
+                'location', 'author', 'category'
+                ).filter(
+                    author__username=self.request.user.username).annotate(
+                        comment_count=Count('comments')).order_by('-pub_date')
+        return QUERYSET.filter(author__username=self.kwargs['slug']).order_by(
+            '-pub_date')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(UserModel, username=self.kwargs['slug'])
+        context['profile'] = get_object_or_404(UserModel,
+                                               username=self.kwargs['slug'])
         return context
     paginate_by = 10
 
@@ -151,10 +157,13 @@ class CategoryListView(ListView):
     template_name = 'blog/category.html'
 
     def get_queryset(self):
-        return QUERYSET.filter(category__slug=self.kwargs['slug']).order_by('-pub_date')
+        return QUERYSET.filter(category__slug=self.kwargs['slug']).order_by(
+            '-pub_date')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = get_object_or_404(Category, is_published=True, slug=self.kwargs['slug'])
+        context['category'] = get_object_or_404(Category,
+                                                is_published=True,
+                                                slug=self.kwargs['slug'])
         return context
     paginate_by = 10
