@@ -10,7 +10,7 @@ def get_query_posts(published=True):
             'author',
             'category').annotate(
                 comment_count=Count('comments')
-            ).order_by('-pub_date')
+                ).order_by('-pub_date')
     if published:
         return queryset.filter(
             pub_date__lte=timezone.now(),
