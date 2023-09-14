@@ -74,11 +74,13 @@ class Post(BaseModel):
     author = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
+        related_name='posts',
         verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
         Location,
         on_delete=models.SET_NULL,
+        related_name='posts',
         null=True,
         blank=True,
         verbose_name='Местоположение'
@@ -86,6 +88,7 @@ class Post(BaseModel):
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
+        related_name='posts',
         null=True,
         verbose_name='Категория'
     )
@@ -110,12 +113,21 @@ class Comment(models.Model):
         Post,
         on_delete=models.CASCADE,
         related_name='comments',
+        verbose_name='Публикация',
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    created_at = models.DateTimeField('Добавлено', auto_now_add=True)
+    author = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE,
+        verbose_name='Автор комментария',
+    )
 
     class Meta:
         ordering = ('created_at',)
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'Комментарии'
 
     def get_absolute_url(self):
         return reverse("blog:post_detail", kwargs={"pk": self.post.pk})
+
+    def __str__(self):
+        return self.text[:20]
