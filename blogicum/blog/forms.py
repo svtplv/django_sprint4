@@ -1,6 +1,7 @@
 from django import forms
 
-from .models import Comment, Post
+from blog.constants import DATETIME_FORMAT
+from blog.models import Comment, Post
 
 
 class PostForm(forms.ModelForm):
@@ -9,6 +10,7 @@ class PostForm(forms.ModelForm):
         exclude = ('author',)
         widgets = {
             'pub_date': forms.DateTimeInput(
+                format=DATETIME_FORMAT,
                 attrs={'type': 'datetime-local'})
         }
 

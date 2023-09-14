@@ -1,1 +1,2 @@
 OBJ_PER_PAGE = 10
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M'
