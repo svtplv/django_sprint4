@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Count
 from django.urls import reverse_lazy
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -8,10 +10,25 @@ from django.views.generic import (
     ListView,
     UpdateView
 )
+
 from blog.constants import OBJ_PER_PAGE
-from blog.utils import get_query_posts
 from blog.forms import CommentForm, PostForm
 from blog.models import Category, Comment, Post, UserModel
+
+
+def get_query_posts(published=True):
+    queryset = Post.objects.prefetch_related(
+        'location',
+        'author',
+        'category').annotate(
+            comment_count=Count('comments')).order_by('-pub_date')
+    if published:
+        return queryset.filter(
+            pub_date__lte=timezone.now(),
+            is_published=True,
+            category__is_published=True
+        )
+    return queryset
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
